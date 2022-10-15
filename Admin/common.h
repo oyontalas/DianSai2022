@@ -13,6 +13,8 @@
 
 #include "GUI.h"
 
+#include "a_DSP.h"
+
 void IT_start(void);
 void IT_stop(void);
 void ADMIN_Init(void);

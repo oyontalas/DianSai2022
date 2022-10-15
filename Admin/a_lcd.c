@@ -1,7 +1,7 @@
 #include "a_lcd.h"
 
 //波形图
-void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float begin_y, float end_x, float end_y)
+void Gui_ShowWave(float *InputWaveData, uint16_t c_len, float begin_x, float begin_y, float end_x, float end_y)
 {
   /* 坐标系矩形区域域起点(c_x0,c_y0) 终点(c_x1,c_y1) */
   uint16_t c_x0 = (uint16_t)(1.0 * LCD_X_SIZE * begin_x);
@@ -33,6 +33,12 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
 
   uint8_t text[64];
 
+  uint32_t *WaveData=(uint32_t *)malloc(c_len*sizeof(uint32_t));
+  for(i=0;i<c_len;i++)
+  {
+    WaveData[i]=(uint32_t)(InputWaveData[i]*1000);
+  }
+
   if (!Flag)
   {
     Lcd_Clear(BackgroundColor);
@@ -46,13 +52,13 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
   }
 
   //   TFT_printf(WordColor, 1, (uint16_t)(1.0*LCD_X_SIZE*0.05-8), (uint16_t)(1.0*LCD_Y_SIZE*0.2), "%.3f",THD);
-  max = min = waveformData[0];
+  max = min = WaveData[0];
   for (i = 0; i < c_len; i++)
   {
-    if (waveformData[i] > max)
-      max = waveformData[i];
-    if (waveformData[i] < min)
-      min = waveformData[i];
+    if (WaveData[i] > max)
+      max = WaveData[i];
+    if (WaveData[i] < min)
+      min = WaveData[i];
   }
   // max = (uint16_t)max + 2;
   // min = (uint16_t)min;
@@ -64,18 +70,12 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
       if (i)
         Gui_DrawLine(StaticWaveData[i - 1][0], StaticWaveData[i - 1][1], StaticWaveData[i][0], StaticWaveData[i][1], BackgroundColor);
 
-  Scale = 1.0 * (max - min) / ScaleNum;
-  for (i = 0; i < ScaleNum; i++)
-  {
-    //  TFT_printf(WordColor, 1, c_x0-36, c_y0 - 8 + i * perH, "%.1f",(float)((max - Scale * i)/4096*3.3));
-    snprintf(text, 4, "%.2f", (float)((max - Scale * i) / 1000));
-    Gui_DrawFont_GBK16(c_x0 - 12 * 4, c_y0 - 8 + i * perH, WordColor, BackgroundColor, text);
-  }
+
 
   for (i = 0; i < c_len; i++)
   {
     uint16_t x = (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0);
-    uint16_t y = (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
+    uint16_t y = (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
     if (i)
       Gui_DrawLine(StaticWaveData[i - 1][0], StaticWaveData[i - 1][1], x, y, WaveColor);
     StaticWaveData[i][0] = x;
@@ -97,16 +97,16 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
         }
       }
       if (i)
-        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
+        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
       x0 = (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0);
-      y0 = (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
+      y0 = (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
     }
     for (i = StaticWaveLen; i < c_len; i++)
     {
       if (i)
-        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
+        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
       x0 = (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0);
-      y0 = (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
+      y0 = (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
     }
   }
   else
@@ -121,9 +121,9 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
         }
       }
       if (i)
-        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
+        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
       x0 = (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0);
-      y0 = (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
+      y0 = (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
     }
     for (i = c_len; i < StaticWaveLen; i++)
     {
@@ -134,7 +134,7 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
   for (i = 0; i < c_len; i++)
   {
     StaticWaveData[i][0] = (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0);
-    StaticWaveData[i][1] = (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
+    StaticWaveData[i][1] = (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
   }
 
 #else
@@ -150,9 +150,9 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
       if (StaticWaveData[i - 1][0] > (uint16_t)(1.0 * j / c_len * (c_x1 - c_x0) + c_x0))
       {
         if (j)
-          Gui_DrawLine(x0, y0, (uint16_t)(1.0 * j / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - waveformData[j]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
+          Gui_DrawLine(x0, y0, (uint16_t)(1.0 * j / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - WaveData[j]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
         x0 = (uint16_t)(1.0 * j / c_len * (c_x1 - c_x0) + c_x0);
-        y0 = (uint16_t)(1.0 * (max - waveformData[j]) / (max - min) * (c_y1 - c_y0) + c_y0);
+        y0 = (uint16_t)(1.0 * (max - WaveData[j]) / (max - min) * (c_y1 - c_y0) + c_y0);
         j++;
       }
       else
@@ -181,9 +181,9 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
     else if (j < c_len)
     {
       if (j)
-        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * j / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - waveformData[j]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
+        Gui_DrawLine(x0, y0, (uint16_t)(1.0 * j / c_len * (c_x1 - c_x0) + c_x0), (uint16_t)(1.0 * (max - WaveData[j]) / (max - min) * (c_y1 - c_y0) + c_y0), WaveColor);
       x0 = (uint16_t)(1.0 * j / c_len * (c_x1 - c_x0) + c_x0);
-      y0 = (uint16_t)(1.0 * (max - waveformData[j]) / (max - min) * (c_y1 - c_y0) + c_y0);
+      y0 = (uint16_t)(1.0 * (max - WaveData[j]) / (max - min) * (c_y1 - c_y0) + c_y0);
       j++;
     }
     else
@@ -194,12 +194,19 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
   for (i = 0; i < c_len; i++)
   {
     StaticWaveData[i][0] = (uint16_t)(1.0 * i / c_len * (c_x1 - c_x0) + c_x0);
-    StaticWaveData[i][1] = (uint16_t)(1.0 * (max - waveformData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
+    StaticWaveData[i][1] = (uint16_t)(1.0 * (max - WaveData[i]) / (max - min) * (c_y1 - c_y0) + c_y0);
   }
 
 #endif
 
   StaticWaveLen = c_len;
+  Scale = 1.0 * (max - min) / ScaleNum;
+  for (i = 0; i < ScaleNum; i++)
+  {
+    //  TFT_printf(WordColor, 1, c_x0-36, c_y0 - 8 + i * perH, "%.1f",(float)((max - Scale * i)/4096*3.3));
+    snprintf(text, 5, "%.2f", (float)((max - Scale * i) / 1000));
+    Gui_DrawFont_GBK16(c_x0 - 12 * 4, c_y0 - 8 + i * perH, WordColor, BackgroundColor, text);
+  }
 
   Gui_DrawLine((c_x0), c_y1, (c_x0), c_y0, c_AxisColor);
   Gui_DrawLine((c_x0), (c_y1 + c_y0) / 2, (c_x1), (c_y1 + c_y0) / 2, c_AxisColor);
@@ -212,6 +219,9 @@ void Gui_ShowWave(uint32_t *waveformData, uint16_t c_len, float begin_x, float b
   {
     Flag++;
   }
+
+  free(WaveData);
+
 }
 
 // 柱状图

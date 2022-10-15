@@ -75,15 +75,57 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
 
 
 
+uint8_t LED_Red_Flag=0;
+uint8_t LED_Blue_Flag=0;
+uint8_t LED_Green_Flag=0;
+uint8_t Buzzer_Flag=0;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
-    if(htim->Instance==TIM2){
-        ADC_GetTemp_En=1;
+    if(htim->Instance==TIM16){
+        // ADC_GetTemp_En=1;
+        if(LED_Red_Flag){
+            htim2.Instance->CCR1+=10;
+            if(htim2.Instance->CCR1>=1000-10){
+                htim2.Instance->CCR1=0;
+                LED_Red_Flag=0;
+                }
+        }
+        if(LED_Blue_Flag){
+            htim2.Instance->CCR2+=10;
+            if(htim2.Instance->CCR2>=1000-10){
+                htim2.Instance->CCR2=0;
+                LED_Blue_Flag=0;
+                }
+        }
+        if(LED_Green_Flag){
+            htim2.Instance->CCR3+=10;
+            if(htim2.Instance->CCR3>=1000-10){
+                htim2.Instance->CCR3=0;
+                LED_Green_Flag=0;
+
+                }
+        }
+        if(Buzzer_Flag){
+            
+            htim1.Instance->CCR1=1000-10;
+            Buzzer_Flag++;
+            if(Buzzer_Flag>=100){
+                htim1.Instance->CCR1=0;
+                Buzzer_Flag=0;
+            }
+            // htim1.Instance->CCR1+=10;
+            // if(htim1.Instance->CCR1>=1000-10){
+            //     htim1.Instance->CCR1=0;
+            //     Buzzer_Flag=0;
+            //     }
+        }  
 
     }
     else if(htim->Instance==TIM17){
         KEY_scan();
+        
+        
         // RTC_Scan();
     }
     // else if (htim->Instance==TIM15){

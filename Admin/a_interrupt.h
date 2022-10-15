@@ -24,6 +24,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart);
 
 extern uint8_t ADC_Flag;
 
+extern uint8_t LED_Red_Flag;
+extern uint8_t LED_Blue_Flag;
+extern uint8_t LED_Green_Flag;
+extern uint8_t Buzzer_Flag;
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
 

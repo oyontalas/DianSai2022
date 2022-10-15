@@ -61,5 +61,11 @@ diansai2022\a_interrupt.o: ..\Admin\common.h
 diansai2022\a_interrupt.o: ..\Admin\a_lcd.h
 diansai2022\a_interrupt.o: ../Lib/GUI.h
 diansai2022\a_interrupt.o: ..\Admin\a_adc.h
+diansai2022\a_interrupt.o: ..\Admin\a_DSP.h
+diansai2022\a_interrupt.o: ../Lib/fdacoefs.h
+diansai2022\a_interrupt.o: ../Lib/tmwtypes.h
+diansai2022\a_interrupt.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h
+diansai2022\a_interrupt.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+diansai2022\a_interrupt.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\float.h
 diansai2022\a_interrupt.o: ..\Admin\a_flash.h
 diansai2022\a_interrupt.o: ../Lib/Flash.h

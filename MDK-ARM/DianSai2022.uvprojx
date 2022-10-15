@@ -312,7 +312,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -1051,6 +1051,11 @@
               <FileType>1</FileType>
               <FilePath>..\Admin\a_lcd.c</FilePath>
             </File>
+            <File>
+              <FileName>a_DSP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Admin\a_DSP.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1077,9 +1082,6 @@
               <FilePath>..\Lib\spi_tftlcd.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
           <GroupName>Middlewares/Library/DSP Library/DSP Library</GroupName>
@@ -1178,6 +1180,9 @@
               </FileOption>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>

@@ -65,3 +65,9 @@ diansai2022\main.o: ../Lib/Flash.h
 diansai2022\main.o: ../Admin/common.h
 diansai2022\main.o: ../Admin/a_lcd.h
 diansai2022\main.o: ../Lib/GUI.h
+diansai2022\main.o: ../Admin/a_DSP.h
+diansai2022\main.o: ../Lib/fdacoefs.h
+diansai2022\main.o: ../Lib/tmwtypes.h
+diansai2022\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h
+diansai2022\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+diansai2022\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\float.h

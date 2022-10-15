@@ -37,6 +37,7 @@
 "diansai2022\common.o"
 "diansai2022\a_adc.o"
 "diansai2022\a_lcd.o"
+"diansai2022\a_dsp.o"
 "diansai2022\cjson.o"
 "diansai2022\cjson_utils.o"
 "diansai2022\gui.o"
