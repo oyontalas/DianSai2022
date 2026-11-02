@@ -6,6 +6,8 @@
 
 12 位 ADC · DMA 循环采样 · 512 点 FFT · TFT 波形显示
 
+[GitHub 仓库 · oyontalas/DianSai2022](https://github.com/oyontalas/DianSai2022)
+
 </div>
 
 基于 STM32G474RET6 实现模拟信号采集、时域波形显示和 FFT 频谱分析，支持通过按键切换显示模式、调整采样率。项目采用 STM32 HAL 与 CMSIS-DSP，在裸机环境下完成采集、计算和显示。
