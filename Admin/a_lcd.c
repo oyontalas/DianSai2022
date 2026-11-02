@@ -1,6 +1,11 @@
 #include "a_lcd.h"
 
-//波形图
+/*
+ * 将 c_len 个数据点映射到屏幕矩形内，时域数据和频谱幅值共用此绘图入口。
+ * begin/end_x、begin/end_y 是 0~1 的屏幕比例坐标，屏幕 y 轴向下增长。
+ * 当前实现要求 1 <= c_len <= 1000，数据非负且乘 1000 后可由 uint32_t 表示。
+ * 注意：尚未检查空指针、分配失败和 max == min；恒定输入会导致纵轴换算除零。
+ */
 void Gui_ShowWave(float *InputWaveData, uint16_t c_len, float begin_x, float begin_y, float end_x, float end_y)
 {
   /* 坐标系矩形区域域起点(c_x0,c_y0) 终点(c_x1,c_y1) */
@@ -24,7 +29,7 @@ void Gui_ShowWave(float *InputWaveData, uint16_t c_len, float begin_x, float beg
   uint32_t max, min;
   float Scale;
 
-  /* 保存上一次的数据，用于清除源波形 */
+  /* 保存上一帧的像素坐标，供下一帧用背景色擦除；静态缓存由各显示模式共用。 */
   static uint16_t StaticWaveData[1000][2];
   static uint16_t StaticWaveLen;
 
@@ -33,6 +38,7 @@ void Gui_ShowWave(float *InputWaveData, uint16_t c_len, float begin_x, float beg
 
   uint8_t text[64];
 
+  // 放大 1000 倍再转整数，用于坐标计算；绘制纵轴标签时再换回原始单位。
   uint32_t *WaveData=(uint32_t *)malloc(c_len*sizeof(uint32_t));
   for(i=0;i<c_len;i++)
   {
@@ -52,6 +58,7 @@ void Gui_ShowWave(float *InputWaveData, uint16_t c_len, float begin_x, float beg
   }
 
   //   TFT_printf(WordColor, 1, (uint16_t)(1.0*LCD_X_SIZE*0.05-8), (uint16_t)(1.0*LCD_Y_SIZE*0.2), "%.3f",THD);
+  // 使用本帧最值自动缩放：max 映射到顶部，min 映射到底部。
   max = min = WaveData[0];
   for (i = 0; i < c_len; i++)
   {
@@ -139,6 +146,8 @@ void Gui_ShowWave(float *InputWaveData, uint16_t c_len, float begin_x, float beg
 
 #else
   // 新波形无清屏输出, V2.0
+  // i 遍历旧曲线线段，j 遍历新数据点；按横坐标交错擦除旧线、绘制新线，
+  // 减少先绘后擦造成的覆盖。旧曲线走完后补绘新点，新点走完后擦除剩余旧线。
   static uint16_t x0, y0;
   i = 1;
   j = 0;
@@ -199,6 +208,7 @@ void Gui_ShowWave(float *InputWaveData, uint16_t c_len, float begin_x, float beg
 
 #endif
 
+  // 保存本帧长度，并更新纵轴数值和坐标轴；后续调用无需再次整屏清除。
   StaticWaveLen = c_len;
   Scale = 1.0 * (max - min) / ScaleNum;
   for (i = 0; i < ScaleNum; i++)
